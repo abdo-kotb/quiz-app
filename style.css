@@ -47,6 +47,16 @@ body.wrong {
   width: 100%;
   height: 3px;
   margin: 16px 0 24px;
+  position: relative;
+}
+.progress-bar::after {
+  content: '';
+  width: 552px;
+  height: inherit;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: hsla(var(--hue), 90%, 35%, 0.2);
 }
 
 .question {
@@ -62,14 +72,27 @@ body.wrong {
   height: 40px;
   border-radius: 5px;
 }
+.btn:active {
+  transform: scale(0.9);
+}
 
 .answer {
+  --hue: var(--hue-neutral);
   width: 100%;
   background-color: hsla(var(--hue), 90%, 35%, 0.1);
   border: 1px solid hsla(var(--hue), 90%, 35%, 0.5);
   margin-bottom: 16px;
   text-align: left;
   text-indent: 16px;
+}
+.answer:hover {
+  background-color: hsla(var(--hue), 90%, 35%, 0.25);
+}
+.answer.correct {
+  --hue: var(--hue-correct);
+}
+.answer.wrong {
+  --hue: var(--hue-wrong);
 }
 
 .control {
@@ -80,7 +103,10 @@ body.wrong {
   width: 50%;
   color: #fff;
   font-size: 20px;
-  background-color: hsl(200, 90%, 35%);
+  background-color: hsl(var(--hue-neutral), 90%, 35%);
+}
+.control-btn:hover {
+  background-color: hsl(var(--hue-neutral), 90%, 25%);
 }
 
 .hidden {

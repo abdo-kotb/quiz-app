@@ -1,3 +1,4 @@
+// all questions array
 const questions = [
   {
     question: 'What is 2 + 2?',
@@ -27,12 +28,12 @@ const questions = [
     ],
   },
   {
-    question: 'Will Sohad do great tomorrow?',
+    question: 'What is 2 - 5?',
     answers: [
-      { answer: 'Yes', correct: true },
-      { answer: 'No' },
-      { answer: 'Of course', correct: true },
-      { answer: 'Definitely', correct: true },
+      { answer: '-3', correct: true },
+      { answer: '-1' },
+      { answer: '2' },
+      { answer: '-6' },
     ],
   },
   {
@@ -45,18 +46,20 @@ const questions = [
     ],
   },
   {
-    question: 'Will tomorrow be a great day for Sohad?',
+    question: 'What is 6 / 2?',
     answers: [
-      { answer: 'Absolutely', correct: true },
-      { answer: 'What!' },
-      { answer: 'Maybe' },
-      { answer: 'No question about it', correct: true },
+      { answer: '12' },
+      { answer: '6' },
+      { answer: '9' },
+      { answer: '3', correct: true },
     ],
   },
 ];
 
+// variables that will later shuffle the questions array and get the index
 let shuffledQuestion, curQuestIndex;
 
+////////////////
 const startBtn = document.getElementById('start-btn');
 const questsContainer = document.getElementById('questions-container');
 const nextBtn = document.getElementById('next-btn');
@@ -64,29 +67,66 @@ const questionEl = document.getElementById('question');
 const answerBtnsContainer = document.getElementById('answers');
 const progressBar = document.getElementById('progress-bar');
 const counter = document.getElementById('counter');
+/////////////////
 
-const showElement = function (el) {
-  el.classList.remove('hidden');
+// functions to remove or add classes
+const removeClass = function (el, cls) {
+  el.classList.remove(cls);
 };
 
+const addClass = function (el, cls) {
+  el.classList.add(cls);
+};
+
+// a function that resets all the states and remove added classes with each new question
 const resetState = function () {
   document.body.className = '';
-  nextBtn.classList.add('hidden');
+  addClass(nextBtn, 'hidden');
   while (answerBtnsContainer.firstChild)
     answerBtnsContainer.firstChild.remove();
 };
 
-const startQuiz = function () {
-  showElement(questsContainer);
-  showElement(nextBtn);
-  startBtn.classList.add('hidden');
+// two functions that will add and remove the needed classes to the answers elements
+const setStatusClass = function (el, state) {
+  if (state) {
+    addClass(el, 'correct');
+    removeClass(el, 'wrong');
+  } else {
+    addClass(el, 'wrong');
+    removeClass(el, 'correct');
+  }
+};
 
+const selectAnswer = function (e) {
+  const btn = e.target;
+  const { correct } = btn.dataset;
+
+  setStatusClass(document.body, correct);
+  setStatusClass(btn, correct);
+
+  if (shuffledQuestion.length > curQuestIndex + 1)
+    removeClass(nextBtn, 'hidden');
+  else {
+    startBtn.textContent = 'Restart';
+    removeClass(startBtn, 'hidden');
+  }
+};
+
+// the function that will start the quiz
+const startQuiz = function () {
+  removeClass(questsContainer, 'hidden');
+  removeClass(nextBtn, 'hidden');
+  addClass(startBtn, 'hidden');
+
+  // a way to randomly shuffle an array
+  // read more about it here https://forum.freecodecamp.org/t/how-does-math-random-work-to-sort-an-array/151540
   shuffledQuestion = questions.sort(() => Math.random() - 0.5);
   curQuestIndex = 0;
 
   setNextQuestion();
 };
 
+// a function that will render new questions on the page
 const renderQuestion = function (questionObj) {
   const { question, answers } = questionObj;
   questionEl.textContent = question;
@@ -100,6 +140,7 @@ const renderQuestion = function (questionObj) {
   });
 };
 
+// a function that will be fired each time nextBtn is clicked
 const setNextQuestion = function () {
   resetState();
   renderQuestion(shuffledQuestion[curQuestIndex]);
@@ -109,24 +150,7 @@ const setNextQuestion = function () {
   progressBar.style.width = `${(curQuestIndex / questions.length) * 100}%`;
 };
 
-const setStatusClass = function (el, state) {
-  if (state) el.className = 'correct';
-  else el.className = 'wrong';
-};
-
-const selectAnswer = function (e) {
-  const btn = e.target;
-  const { correct } = btn.dataset;
-
-  setStatusClass(document.body, correct);
-
-  if (shuffledQuestion.length > curQuestIndex + 1) showElement(nextBtn);
-  else {
-    startBtn.textContent = 'Restart';
-    showElement(startBtn);
-  }
-};
-
+// event handlers
 startBtn.addEventListener('click', startQuiz);
 
 answerBtnsContainer.addEventListener('click', selectAnswer);
